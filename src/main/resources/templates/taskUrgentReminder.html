@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>URGENT Task Reminder</title>
+</head>
+<body>
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background: #fff8f8; border-left: 5px solid #e74c3c;">
+    <h2 style="color: #e74c3c;">⏰ URGENT: Task Due Soon!</h2>
+    <p><strong>Hello <th:text="${username}">User</th:text>,</strong></p>
+    <p><strong style="color: #e74c3c;">This task is due within the next hour:</strong></p>
+
+    <div style="background: #ffeaea; padding: 15px; border: 1px solid #fcc; border-radius: 4px; margin: 15px 0;">
+        <strong th:text="${taskTitle}">Task Title</strong><br/>
+        <small th:text="'Priority: ' + ${taskPriority}">HIGH</small><br/>
+        <em th:text="'Due: ' + ${#temporals.format(deadline, 'MMM dd, yyyy HH:mm')}">Jun 10, 2025 14:30</em>
+    </div>
+
+    <p style="font-weight: bold;">Please complete it as soon as possible.</p>
+    <a th:href="@{http://localhost:8080/dashboard}"
+       style="display: inline-block; background: #e74c3c; color: white; padding: 10px 20px;
+            text-decoration: none; border-radius: 6px; font-weight: bold;">
+        Go to Dashboard
+    </a>
+
+    <p style="margin-top: 20px; font-size: 12px; color: #888;">
+        This is an automated message. Please do not reply.
+    </p>
+</div>
+</body>
+</html>

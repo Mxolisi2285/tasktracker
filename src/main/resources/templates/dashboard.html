@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Task Dashboard</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/dashboard.css}" />
+</head>
+<body>
+<div class="dashboard-container" role="main">
+    <!-- Header -->
+    <header class="header" aria-label="Page header">
+        <h1>Task Manager</h1>
+        <p>Welcome, <span sec:authentication="principal.username">User</span> 👋</p>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="btn-logout">Sign Out</button>
+        </form>
+    </header>
+
+    <!-- Task Creation Form -->
+    <section class="task-form" aria-labelledby="create-task-heading">
+        <h2 id="create-task-heading">Create a New Task</h2>
+        <form th:action="@{/tasks}" method="post">
+            <div class="form-row">
+                <input type="text" name="title" placeholder="Task Title" required />
+
+                <select name="priority" required>
+                    <option value="HIGH">High Priority</option>
+                    <option value="MEDIUM">Medium Priority</option>
+                    <option value="LOW">Low Priority</option>
+                </select>
+
+                <input type="datetime-local" name="deadline" />
+            </div>
+
+            <textarea name="description" placeholder="Task details (optional)"></textarea>
+
+            <button type="submit" class="btn-primary">Add Task</button>
+        </form>
+    </section>
+
+    <!-- Task List -->
+    <section class="task-list" aria-labelledby="task-list-heading">
+        <h2 id="task-list-heading">Your Tasks</h2>
+
+        <!-- Success Messages -->
+        <div th:if="${param.added}" class="success-msg" role="alert">
+            ✅ Task added successfully!
+        </div>
+        <div th:if="${param.deleted}" class="success-msg" role="alert">
+            ✅ Task deleted.
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty" th:if="${#lists.isEmpty(tasks)}" aria-live="polite">
+            <p>You have no tasks yet. Create one above!</p>
+        </div>
+
+        <!-- Task Items -->
+        <ul class="task-list-ul" th:unless="${#lists.isEmpty(tasks)}">
+            <li class="task-item" th:each="task : ${tasks}">
+                <div class="task-content" th:classappend="${task.priority} + '-priority'">
+                    <div class="task-header">
+                        <strong th:text="${task.title}" th:class="${task.completed} ? 'completed-text' : ''">Task Title</strong>
+                        <span class="badge" th:text="${task.priority}">HIGH</span>
+                    </div>
+
+                    <p th:if="${task.description}" class="task-desc" th:text="${task.description}">Description here</p>
+
+                    <div class="task-meta">
+                        <span>
+                            📅 <strong>Deadline:</strong>
+                            <time th:datetime="${task.deadline}"
+                                  th:text="${#temporals.format(task.deadline, 'MMM dd, yyyy HH:mm')}">
+                                Jun 10, 2025 14:30
+                            </time>
+                        </span>
+
+                        <!-- Edit Deadline Inline -->
+                        <form th:action="@{/tasks/updateDeadline}" method="post" class="inline-form">
+                            <input type="hidden" name="taskId" th:value="${task.id}" />
+                            <input type="datetime-local" name="newDeadline"
+                                   th:value="${#temporals.format(task.deadline, &quot;yyyy-MM-dd'T'HH:mm&quot;)}" />
+                            <button type="submit" class="btn-small">Update</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Complete / Delete Actions -->
+                <div class="task-actions">
+                    <form th:action="@{/tasks/toggle}" method="post" class="inline-form">
+                        <input type="hidden" name="taskId" th:value="${task.id}" />
+                        <button type="submit" class="btn-complete"
+                                th:classappend="${task.completed} ? 'completed' : ''"
+                                th:text="${task.completed} ? 'Completed' : 'Mark Complete'">
+                        </button>
+                    </form>
+
+                    <form th:action="@{/tasks/delete}" method="post" class="inline-form">
+                        <input type="hidden" name="taskId" th:value="${task.id}" />
+                        <button type="submit" class="btn-delete">🗑️ Delete</button>
+                    </form>
+                </div>
+            </li>
+        </ul>
+    </section>
+</div>
+</body>
+</html>

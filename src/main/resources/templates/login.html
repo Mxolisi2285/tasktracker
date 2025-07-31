@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - TaskTracker</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+</head>
+<body>
+<div class="login-container">
+  <h1>The Road to Success Awaits</h1>
+
+  <!-- Success Messages -->
+  <div th:if="${param.success}" class="success-message">
+    ✅ Registration successful!, Start your Journey.
+  </div>
+  <div th:if="${param.logout}" class="success-message">
+    🔐 You've been logged out successfully.
+  </div>
+
+  <!-- Login Form -->
+  <form th:action="@{/login}" method="post">
+    <!-- CSRF Token (only available if CSRF is ENABLED) -->
+    <input type="hidden" name="_csrf" th:value="${_csrf?.token}" />
+
+    <!-- Username -->
+    <div class="form-group" th:classappend="${param.error} ? 'error' : ''">
+      <label for="username">Username or Email</label>
+      <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus />
+    </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required />
+    </div>
+
+    <!-- Error Message -->
+    <div th:if="${param.error}" class="error-message">
+      Invalid username or password. Please try again.
+    </div>
+
+    <!-- Buttons -->
+    <button type="submit" class="btn btn-primary">Access Account</button>
+    <button type="button" class="btn btn-secondary" th:onclick="location.href='/register'">
+      Start Your Journey
+    </button>
+  </form>
+
+  <!-- Links -->
+  <div class="links">
+    <a th:href="@{/forgotPassword}">Forgot password?</a>
+  </div>
+</div>
+</body>
+</html>
